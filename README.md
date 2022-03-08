@@ -1,24 +1,17 @@
-# Joplin Plugin
+# joplin-plugin-emoji
 
-This is a template to create a new Joplin plugin.
+This plugin allows you to input emoji simply by typing `:[emoji name]`.
 
-The main two files you will want to look at are:
+## Usage
+- Pressing  `:` to show the Emoji Picker
+- Using name to search for emojis you want.
+- Click outside the picker or input special chars like `{}[].,/\` will close the picker.
 
-- `/src/index.ts`, which contains the entry point for the plugin source code.
-- `/src/manifest.json`, which is the plugin manifest. It contains information such as the plugin a name, version, etc.
+## Demo
 
-## Building the plugin
+![Demo.gif](doc/Demo.gif)
 
-The plugin is built using Webpack, which creates the compiled code in `/dist`. A JPL archive will also be created at the root, which can use to distribute the plugin.
+The repository is here: https://github.com/Retr0ve/joplin-plugin-emoji
 
-To build the plugin, simply run `npm run dist`.
+If there are any bugs, please open an issue and let me know, thanks.
 
-The project is setup to use TypeScript, although you can change the configuration to use plain JavaScript.
-
-## Updating the plugin framework
-
-To update the plugin framework, run `npm run update`.
-
-In general this command tries to do the right thing - in particular it's going to merge the changes in package.json and .gitignore instead of overwriting. It will also leave "/src" as well as README.md untouched.
-
-The file that may cause problem is "webpack.config.js" because it's going to be overwritten. For that reason, if you want to change it, consider creating a separate JavaScript file and include it in webpack.config.js. That way, when you update, you only have to restore the line that include your file.
