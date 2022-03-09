@@ -1,38 +1,81 @@
-const COMMAND_PREFIX = ":";
-
 module.exports = {
   default: function (_context) {
     function plugin(CodeMirror) {
 
       var startPos = null;
+      var TRIGGER_MODE = '';
       async function showEmojiPicker(cm, change) {
+        
+        TRIGGER_MODE = await _context.postMessage("getTrigger");
+        _context.postMessage("TRIGGER_MODE: " + TRIGGER_MODE);
 
-        // Close the picker if user typed characters below or remove the ":" token
-        if (change.text[0].search(/[()\[\]{};>,.`'"\s\\\n\r]/) !== -1 || cm.getCursor().ch == 0 || change.removed == ":") {
+        // Close the picker if user typed characters below
+        if (change.text[0].search(/[()\[\]{};>,.`'"\s\\\n\r]/) !== -1 || cm.getCursor().ch == 0) {
           resetPicker(cm);
         }
-        // Listen for the ":" token
-        if (change.text[0] == COMMAND_PREFIX) {
-          startPos = cm.getCursor();
-          cm.state.emojiPickerStatus = true;
-        }
-        if (cm.state.emojiPickerStatus) {
-          const cursor = cm.getCursor();
-          const token = cm.getRange(startPos, cursor);
 
-          // Move the Picker tooltip along with the cursor
-          if (cm.state.emojiPicker) remove(cm.state.emojiPicker);
-          var where = cm.cursorCoords();
-          cm.state.emojiPicker = makeTooltip(
-            where.right + 1,
-            where.bottom,
-            token,
-            cm
-          );
+        if(TRIGGER_MODE == ':') {
+          _context.postMessage("cm.state.emojiPickerStatus: " + cm.state.emojiPickerStatus);
+          if (change.removed == ":") {
+            resetPicker(cm);
+          }
+          // Listen for the ":" token
+          if (change.text[0] == ':'){
+            startPos = cm.getCursor();
+            cm.state.emojiPickerStatus += 1;
+          }
+          _context.postMessage("cm.state.emojiPickerStatus: " + cm.state.emojiPickerStatus);
+          // Move the Picker tooltip along with the cursor 
+          if (cm.state.emojiPickerStatus >= 1) {
+            const cursor = cm.getCursor();
+            const token = cm.getRange(startPos, cursor);
+            if (token.length >= 1) {
+              if (cm.state.emojiPicker) remove(cm.state.emojiPicker);
+              var where = cm.cursorCoords();
+              cm.state.emojiPicker = makeTooltip(
+                where.right + 1,
+                where.bottom,
+                token,
+                cm
+              );
+            }
+          }
+        } else if (TRIGGER_MODE == '::') {
+          _context.postMessage("cm.state.emojiPickerStatus: " + cm.state.emojiPickerStatus);
+          if (change.removed == ":" && cm.state.emojiPickerStatus > 0) {
+            cm.state.emojiPickerStatus -= 1;
+          }
+          if (cm.state.emojiPickerStatus == 0) {
+            resetPicker(cm);
+          }
+          // Listen for the ":" token
+          if (change.text[0] == ':'){
+            startPos = cm.getCursor();
+            cm.state.emojiPickerStatus += 1;
+          } else {
+            if (cm.state.emojiPickerStatus == 1) {
+              resetPicker(cm);
+            }
+          }
+          _context.postMessage("cm.state.emojiPickerStatus: " + cm.state.emojiPickerStatus);
+          // Move the Picker tooltip along with the cursor 
+          if (cm.state.emojiPickerStatus >= 2) {
+            const cursor = cm.getCursor();
+            const token = cm.getRange(startPos, cursor);
+            if (cm.state.emojiPicker) remove(cm.state.emojiPicker);
+            var where = cm.cursorCoords();
+            cm.state.emojiPicker = makeTooltip(
+              where.right + 1,
+              where.bottom,
+              token,
+              cm
+            );
+          }
         }
       }
 
       function makeTooltip(x, y, token, cm, className) {
+        _context.postMessage("makeTooltip");
         var node = elt(
           "div",
           "tooltip" + " " + (className || ""),
@@ -58,16 +101,26 @@ module.exports = {
           if(e.target.className.search('intercom') == -1) {
             resetPicker(cm);
             this.removeEventListener('click',arguments.callee,false);
-            
           }
           // Remove token and replaced with emoji
           if(e.target.className == 'intercom-emoji-picker-emoji'){
-            line = startPos.line;
-            ch = startPos.ch - 1;
-            cm.replaceRange(e.target.innerText, {line, ch}, cm.getCursor());
-            resetPicker(cm);
-            cm.focus();
-            cm.setCursor(line, ch + 2);
+            if( TRIGGER_MODE == ':') {
+              line = startPos.line;
+              ch = startPos.ch - 1;
+              cm.replaceRange(e.target.innerText, {line, ch}, cm.getCursor());
+              resetPicker(cm);
+              // Reactivate cursor
+              cm.focus();
+              cm.setCursor(line, ch + 2);
+            } else if (TRIGGER_MODE == '::') {
+              line = startPos.line;
+              ch = startPos.ch - 2;
+              cm.replaceRange(e.target.innerText, {line, ch}, cm.getCursor());
+              resetPicker(cm);
+              // Reactivate cursor
+              cm.focus();
+              cm.setCursor(line, ch + 3);
+            }   
             this.removeEventListener('click',arguments.callee,false);
           }
         });
@@ -80,7 +133,6 @@ module.exports = {
           // Fits below cursor
           box.style.top = 5 + "px";
           box.style.removeProperty = "buttom";
-
         } else {
           box.style.bottom = 30 + "px";
           box.style.removeProperty = "top";
@@ -107,20 +159,22 @@ module.exports = {
 
       function resetPicker(cm) {
         _context.postMessage("resetPicker");
-        cm.state.emojiPickerStatus = null;
+        cm.state.emojiPickerStatus = 0;
         startPos = null;
         remove(cm.state.emojiPicker);
       }
+
 
       CodeMirror.defineOption(
         "emojiPicker",
         false,
         async function (cm, val, old) {
           if (old && old != CodeMirror.Init) {
-            cm.state.emojiPickerStatus = null;
+            cm.state.emojiPickerStatus = 0;
             cm.off("change", showEmojiPicker);
           }
           if (val) {
+            cm.state.emojiPickerStatus = 0;
             cm.on("change", showEmojiPicker);
           }
         }
@@ -130,7 +184,6 @@ module.exports = {
 
     return {
       plugin: plugin,
-      codeMirrorResources: ["addon/hint/show-hint"],
       codeMirrorOptions: { emojiPicker: true },
       assets: function () {
         return [{ name: "./emoji-picker.css" }];
