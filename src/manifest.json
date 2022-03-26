@@ -6,7 +6,7 @@
 	"name": "Emoji",
 	"description": "A emoji picker.",
 	"author": "Retr0ve",
-	"homepage_url": "",
+	"homepage_url": "https://github.com/Retr0ve/joplin-plugin-emoji",
 	"repository_url": "https://github.com/Retr0ve/joplin-plugin-emoji",
 	"keywords": []
 }
