@@ -12,14 +12,13 @@ var genEmoji = function() {
     var categories = {};
     emojis.forEach((emojiItem) => {
         if (Object.keys(categories).indexOf(String(emojiItem.group)) === -1 && emojiItem.hasOwnProperty('group')){
-        var groupDiv = groups.appendChild(elt("div", "intercom-emoji-picker-group"));
 
         var groupLabel = groupsSubgroups.groups.find((groupMsg) => {return group.groups[emojiItem.group] == groupMsg.key}).message;
+        var groupDiv = groups.appendChild(elt("div", "intercom-emoji-picker-group", groupLabel));
 
         groupDiv.appendChild(elt("div", "intercom-emoji-picker-group-title", groupLabel, groupLabel));
         
-        var groupCttDiv = groupDiv.appendChild(elt("div", "intercom-emoji-picker-group-content"));
-
+        var groupCttDiv = groupDiv.appendChild(elt("div", "intercom-emoji-picker-group-content", groupLabel));
         categories[emojiItem.group] = groupCttDiv; 
         
         }

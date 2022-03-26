@@ -103,9 +103,19 @@ module.exports = {
         // Search for emojis using token
         if(token != null && token != undefined && token != '' && token != ' ') {
           Array.prototype.forEach.call(document.querySelectorAll('.intercom-emoji-picker-emoji:not([name*="' + token + '"])'),function(el){  
-            el.style.display = 'none';
+            // el.style.display = 'none';
+            el.className += ' hidden';
           });
         }
+
+        // If all the emojis are hidden, remove the group title
+        groupsSubgroups.groups.forEach(function(group) {
+          if (document.querySelectorAll('.intercom-emoji-picker-group-content[name="' + group.message + '"] span:not(.hidden)').length == 0) {
+            document.querySelector('.intercom-emoji-picker-group[name="' + group.message + '"]').style.display = 'none';
+          } else {
+            document.querySelector('.intercom-emoji-picker-group[name="' + group.message + '"]').style.display = 'block';
+          }
+        })
 
         // Click handler
         document.addEventListener('click', function(e) {
@@ -142,6 +152,14 @@ module.exports = {
           box.style.bottom = 30 + "px";
           box.style.removeProperty = "top";
         }
+
+        // Select the first emoji
+        // var firstEmoji = document.querySelector('.intercom-emoji-picker-emoji');
+
+
+
+
+
         return node;
       }
 
