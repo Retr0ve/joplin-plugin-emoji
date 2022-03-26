@@ -17,7 +17,10 @@ var genEmoji = function() {
         var groupLabel = groupsSubgroups.groups.find((groupMsg) => {return group.groups[emojiItem.group] == groupMsg.key}).message;
 
         groupDiv.appendChild(elt("div", "intercom-emoji-picker-group-title", groupLabel, groupLabel));
-        categories[emojiItem.group] = groupDiv; 
+        
+        var groupCttDiv = groupDiv.appendChild(elt("div", "intercom-emoji-picker-group-content"));
+
+        categories[emojiItem.group] = groupCttDiv; 
         
         }
         if (emojiItem.hasOwnProperty('group') && emojiItem.version <= 12){

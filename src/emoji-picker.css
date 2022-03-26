@@ -238,14 +238,21 @@
 .intercom-emoji-picker-group {
     margin: 10px -5px;
 }
-.intercom-emoji-picker-group {
+/* .intercom-emoji-picker-group {
     margin: 10px -5px;
-}
+} */
 .intercom-emoji-picker-group-title {
     color: #b8c3ca;
     font-weight: 400;
     font-size: 13px;
     margin: 5px;
+}
+.intercom-emoji-picker-group-content {
+    display: grid;
+    grid-template-columns: repeat(6, 2.375rem);
+    width: 100%;
+    justify-content: space-around;
+    align-content: space-between;
 }
 .intercom-emoji-picker-emoji {
     padding: 5px;
