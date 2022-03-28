@@ -3,7 +3,7 @@ const emojis = require('emojibase-data/en/data.json');
 const groupsSubgroups = require('emojibase-data/en/messages.json');
 const group = require('emojibase-data/meta/groups.json');
 
-var genEmoji = function() {
+var genEmoji = function(THEME) {
     var popover = elt("div", "intercom-composer-popover intercom-composer-emoji-popover")
     var picker = popover.appendChild(elt("div", "intercom-emoji-picker"));
     var body = picker.appendChild(elt("div", "intercom-composer-popover-body"));

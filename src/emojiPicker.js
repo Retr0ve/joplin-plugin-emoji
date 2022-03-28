@@ -13,11 +13,14 @@ module.exports = {
     function plugin(CodeMirror) {
 
       var startPos = null;
-      var TRIGGER_MODE = '';
+      var TRIGGER_MODE = ':';
+      var THEME = null;
       async function showEmojiPicker(cm, change) {
         
         TRIGGER_MODE = await _context.postMessage("getTrigger");
+        THEME = await _context.postMessage("getTheme");
         _context.postMessage("TRIGGER_MODE: " + TRIGGER_MODE);
+        _context.postMessage(THEME);
 
         // Close the picker if user typed characters below
         if (change.text[0].search(/[()\[\]{};>,.`'"\s\\\n\r]/) !== -1 || cm.getCursor().ch == 0) {
@@ -153,12 +156,15 @@ module.exports = {
           box.style.removeProperty = "top";
         }
 
+        // Change theme according to the app setting
+        var popover = document.querySelector('.intercom-composer-popover.intercom-composer-emoji-popover');
+        popover.style.backgroundColor = THEME.backgroundColor;
+        // popover.style.color = THEME.color;
+
         // Select the first emoji
-        // var firstEmoji = document.querySelector('.intercom-emoji-picker-emoji');
-
-
-
-
+        // var firstEmoji = document.querySelector('.intercom-emoji-picker-group-content span:not(.hidden)');
+        // // Keyboard navigation
+        // document.addEventListener('keydown', function(e) {})
 
         return node;
       }
