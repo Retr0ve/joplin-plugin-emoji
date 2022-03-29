@@ -1,7 +1,6 @@
-const fs = require('fs-extra');
-const emojis = require('emojibase-data/en/data.json');
-const groupsSubgroups = require('emojibase-data/en/messages.json');
-const group = require('emojibase-data/meta/groups.json');
+const emojis = require('./emojibase-data/en/data.json');
+const groupsSubgroups = require('./emojibase-data/en/messages.json');
+const group = require('./emojibase-data/meta/groups.json');
 const elt = require('./utils');
 const genEmoji = require('./pickerGen');
 module.exports = {
