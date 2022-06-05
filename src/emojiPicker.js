@@ -142,7 +142,7 @@ module.exports = {
           }
         });
         
-        // If the Picker is out of the window, move it below the cursor
+        // If the Picker is out of the window, move it back in
         var pos = cm.cursorCoords();
         var box = document.querySelector(".intercom-composer-popover");
 
@@ -153,6 +153,14 @@ module.exports = {
         } else {
           box.style.bottom = 30 + "px";
           box.style.removeProperty = "top";
+        }
+
+        if (pos.left - box.offsetWidth < 0) {
+          box.style.right = "unset";
+        } else if (pos.left + box.offsetWidth > window.innerWidth) {
+          box.style.right = "calc(50%)";
+        } else {
+          box.style.right = "calc(50% - 165px)";
         }
 
         // Change theme according to the app setting
