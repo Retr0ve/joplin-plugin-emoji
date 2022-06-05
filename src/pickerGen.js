@@ -5,6 +5,7 @@ const group = require('./emojibase-data/meta/groups.json');
 
 var genEmoji = function(THEME) {
     var popover = elt("div", "intercom-composer-popover intercom-composer-emoji-popover")
+    popover.style.backgroundColor = THEME.backgroundColor;
     var picker = popover.appendChild(elt("div", "intercom-emoji-picker"));
     var body = picker.appendChild(elt("div", "intercom-composer-popover-body"));
     var groups = body.appendChild(elt("div", "intercom-emoji-picker-groups"));

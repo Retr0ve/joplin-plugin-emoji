@@ -7,19 +7,29 @@ module.exports = {
 
   default: function (_context) {
 
-    var pickerHtml = genEmoji();
+    // var pickerHtml = genEmoji();
 
     function plugin(CodeMirror) {
 
       var startPos = null;
       var TRIGGER_MODE = ':';
       var THEME = null;
+      var pickerHtml = null;
+      var THEME_CHANGED = false;
       async function showEmojiPicker(cm, change) {
         
         TRIGGER_MODE = await _context.postMessage("getTrigger");
-        THEME = await _context.postMessage("getTheme");
-        _context.postMessage("TRIGGER_MODE: " + TRIGGER_MODE);
-        _context.postMessage(THEME);
+        if(THEME == null || THEME.id !== await _context.postMessage("getTheme").id){
+          THEME = await _context.postMessage("getTheme");
+          THEME_CHANGED = true;
+        }
+        _context.postMessage("TRIGGER_MODE " + TRIGGER_MODE);
+        _context.postMessage("THEME " + THEME);
+
+        if (THEME_CHANGED || pickerHtml === null) {
+          pickerHtml = genEmoji(THEME);
+          THEME_CHANGED = false;
+        }
 
         // Close the picker if user typed characters below
         if (change.text[0].search(/[()\[\]{};>,.`'"\s\\\n\r]/) !== -1 || cm.getCursor().ch == 0) {
@@ -164,8 +174,10 @@ module.exports = {
         }
 
         // Change theme according to the app setting
-        var popover = document.querySelector('.intercom-composer-popover.intercom-composer-emoji-popover');
-        popover.style.backgroundColor = THEME.backgroundColor;
+
+        // var popover = document.querySelector('.intercom-composer-popover.intercom-composer-emoji-popover');
+        // popover.style.backgroundColor = THEME.backgroundColor;
+
         // popover.style.color = THEME.color;
 
         // Select the first emoji
